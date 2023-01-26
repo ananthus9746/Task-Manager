@@ -54,7 +54,8 @@ const createUser =async(req,res)=>{
     console.log("post admin",req.body)
     const user = new users({
         username:req.body.userName,
-        password:req.body.password
+        password:req.body.password,
+        email:req.body.email
     })
     user.save().then((user)=>{
         console.log("user saved..",user)
@@ -88,6 +89,8 @@ const creatingTasks = (req,res) =>{
         user:user,
         taskname:taskName,
         time :time,
+        status:"assigned",
+        created:Date.now(),
         description:discription
     })
     Task.save().then((task)=>{

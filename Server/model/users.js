@@ -11,6 +11,11 @@ const UserSchema = new mongoose.Schema({
         require : true,
         trim: true,
     },
+    email:{
+        type : String,
+        require : true,
+        trim: true,
+    },
     blocked:{
         type:Boolean,
         default:false,
