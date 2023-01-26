@@ -10,7 +10,16 @@ const UserSchema = new mongoose.Schema({
         type : String,
         require : true,
         trim: true,
-    }
-})
+    },
+    blocked:{
+        type:Boolean,
+        default:false,
+    },
+    // createdAt:{
+    //     default: Date.now
+
+    // }
+
+},{timestamps:true})
 
 module.exports = mongoose.model("users", UserSchema);

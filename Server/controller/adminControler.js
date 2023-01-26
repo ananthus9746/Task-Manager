@@ -52,7 +52,6 @@ const adminLogin =(req,res)=>{
 
 const createUser =async(req,res)=>{
     console.log("post admin",req.body)
-
     const user = new users({
         username:req.body.userName,
         password:req.body.password
@@ -62,18 +61,42 @@ const createUser =async(req,res)=>{
     })
       console.log("newly inseted user..",user)
      res.status(200).json(user)
-
-
-
 }
 
-const viewUsers =(req,res)=>{
-    console("gaet all users")
+const viewUsers =async(req,res)=>{
+    console.log("gat all users")
+    // let count = await users.find({}).count()
+    let user = await users.find({})//.skip((req.params.page - 1) * 5).limit(5).exec();
+    if(!user){
+        res.status(500).json({Error:"no users"})
+    }
+    else{
+        res.status(200).json({sucess:"All users",user})
+        console.log("all users..",users)
+        
+    }
+    
 }
-
+// ----------------------------CREATING TASK------------------------------//
 
 const creatingTasks = (req,res) =>{
-    console.log("creating task ")
+    console.log("creating task ",req.body)
+    const {taskName,user,time,discription} =req.body.taskData
+
+
+    const Task = new task({
+        user:user,
+        taskname:taskName,
+        time :time,
+        description:discription
+    })
+    Task.save().then((task)=>{
+        console.log("task saved..",task)
+    })
+      console.log("newly inseted task..",task)
+     res.status(200).json(task)
+    
+
 }
 
 // -------------------ADMIN DASHBOARD GET ALL DETAILS--------------------//

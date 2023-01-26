@@ -4,24 +4,30 @@ const { Schema } = mongoose;
 
 const taskSchema = new Schema({
    
-    userId: {
-        type: String,
-        required: true
-
-    },  taskname : {
-
-        type:String
-
-    },
-    description : {
-        type:String
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: "users",
+        require: true,
+    },  
+    taskname : {
+        type : String,
+        require : true,
+        trim: true,
     },
     time : {
-       
-        type:Number
+        type : String,
+        require : true,
+        trim: true,
+    },
+    description : {
+        type : String,
+        require : true,
+        trim: true,
+    },
+    status:{
+        type:String
     },
     created : {
-       
         type:Date
     },
     started : {
@@ -33,9 +39,6 @@ const taskSchema = new Schema({
     totalTime :{
         type : Number
     },
-    status:{
-        type:String
-    }
 })
 
 module.exports =  mongoose.model('task', taskSchema)
