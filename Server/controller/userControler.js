@@ -3,6 +3,10 @@ const jwt=require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const task = require('../model/task')
 const users = require('../model/users')
+const { ObjectId } = require('mongodb');
+
+
+// ---------------USER LOGIN-----------------------------------------//
 
 const userLogin = async(req, res) => {
   try{
@@ -20,11 +24,11 @@ const userLogin = async(req, res) => {
           "process.env.JWT_USER_SECRET_KEY", {
           expiresIn: "10m",
          })
-         let userData={
-          userName:UserEmail[0].username,
-          email:UserEmail[0].email,
-         }
-         res.status(200).json({UserToken:UserToken,user:userData})
+        //  let userData={
+        //   userName:UserEmail[0].username,
+        //   email:UserEmail[0].email,
+        //  }
+         res.status(200).json({UserToken:UserToken,userId:UserEmail[0]._id})
       }
       else{
         console.log("Wrong password",UserEmail[0].password)
@@ -43,37 +47,70 @@ const userLogin = async(req, res) => {
 
 };
 
-module.exports = { userLogin };
+// ------------------------GETTING TASKS FOR USER-----------------------//
+const getTasks= async(req,res)=>{
+  console.log("entered task..",req.params.id)
+  console.log("Status..",req.params.status)
+  let userId=req.params.id
+
+  try{
+
+    let Task =await task.find({user:ObjectId(userId),status :req.params.status}).populate('user')
+    if(Task.length>0){
+      res.status(200).json({Task:Task})
+    }
+
+  }
+  catch(error){
+    console.log("getTask error",error)
+  }
+}
+// -------------UPDATING TASK STATUS----------------------------------//
+const UpdateTask = async(req,res)=>{
+  console.log("enterd to upadate task",req.body)
+  const {taskId,userId,status} =req.body
+
+  try{
+      let findedTask=  await task.
+      findOne({_id:taskId,user:ObjectId(userId)})
+
+      if(findedTask.status==="assigned"){
+          console.log("task..",findedTask)
+          findedTask.status=status//START
+          findedTask.started = Date.now()
+          console.log("updated to START task..",findedTask)
+      }
+      else{
+            let time = new Date(Date.now()).getTime() - new Date(taskView.started).getTime()
+            const differenceInMinutes = Math.round(time / 1000 / 60)
+            console.log(time , differenceInMinutes , "time..." )
+
+            findedTask.finished = Date.now()
+            findedTask.status = req.body.status ;
+            findedTask.totalTime = differenceInMinutes
+      }
+      await findedTask.save()
+      res.status(200).json({sucess:"updated"})
+  }
+  catch(err){
+    console.log("cant save updated task..",err)
+    res.status(500).json({ error: "something  on server wrong" })
+  }
+
+}
+
+module.exports = { userLogin ,getTasks,UpdateTask};
 
 
 
 
-
-// const { userName, password,email} = req.body;
-// try {
-//   if (userName === Username) {
-//     if (Password === password) {
-//       const token = jwt.sign(
-//         { username: userName, auth: true },
-//         "process.env.JWT_ADMIN_SECRET_KEY",
-//         {
-//           expiresIn: "10m",
-//         }
-//       );
-
-//       res.json({ Admintoken: token, auth: true });
-//       console.log("admin verified");
-//     } else {
-//       res.status(401).json({ error: "Incorrect Passwoard" });
-//       console.log("incorrect password");
-//     }
-//   } else {
-//     res.status(401).json({ error: "Incorect username" });
-//     console.log("Incorect username");
-//   }
-// } catch (error) {
-//   res.status(500).json({ error: "server error" });
-//   console.log("server error", error);
-// }
-
-// res.status(200).json({ message: "user" });
+// return new Promise(async (resolve, reject) => {
+//   var updateUser = await User.updateOne(
+//     { _id: userid },
+//     { $set: { blocked: true } }
+//   );
+//   resolve({ status: true });
+//   console.log("updated user status to true..", updateUser);
+// }).then((response) => {
+//   res.json(response);
+// });

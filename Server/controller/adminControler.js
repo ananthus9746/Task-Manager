@@ -94,10 +94,10 @@ const creatingTasks = (req,res) =>{
         description:discription
     })
     Task.save().then((task)=>{
+        res.status(200).json(task)
         console.log("task saved..",task)
     })
       console.log("newly inseted task..",task)
-     res.status(200).json(task)
     
 
 }
