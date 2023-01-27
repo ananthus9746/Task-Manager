@@ -8,7 +8,7 @@ const users = require('../model/users')
 
 const verifyUser =(req,res,next)=>{
 
-    console.log("admin login athtiction..",req.body)
+    console.log("admin login athtiction..",)
 
     // res.status(200).json({message:"admin"})
 next()

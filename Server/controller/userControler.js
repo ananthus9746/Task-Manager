@@ -65,7 +65,8 @@ const getTasks= async(req,res)=>{
     console.log("getTask error",error)
   }
 }
-// -------------UPDATING TASK STATUS----------------------------------//
+// ------------------UPDATING TASK STATUS------------------------------//
+                   //START-----COMPLETE//
 const UpdateTask = async(req,res)=>{
   console.log("enterd to upadate task",req.body)
   const {taskId,userId,status} =req.body
@@ -74,19 +75,26 @@ const UpdateTask = async(req,res)=>{
       let findedTask=  await task.
       findOne({_id:taskId,user:ObjectId(userId)})
 
+                 //START
       if(findedTask.status==="assigned"){
           console.log("task..",findedTask)
-          findedTask.status=status//START
-          findedTask.started = Date.now()
+          findedTask.status=status//STARTED TIME
+          findedTask.started = Date.now()///STARTED TIME NOW
           console.log("updated to START task..",findedTask)
       }
+
+      else if(findedTask.status == "completed"){
+        findedTask.status = req.body.status ;
+        findedTask.finished = Date.now()//COMPLETE/FINISH DATE NOW
+      }
+              //TOTAL TIME TAKED IN TASK//
       else{
-            let time = new Date(Date.now()).getTime() - new Date(taskView.started).getTime()
+        //FINIHED DATA WITH TOTAL TIME TAKED IN TASK
+            let time = new Date(Date.now()).getTime() - new Date(findedTask.started).getTime()
             const differenceInMinutes = Math.round(time / 1000 / 60)
             console.log(time , differenceInMinutes , "time..." )
 
-            findedTask.finished = Date.now()
-            findedTask.status = req.body.status ;
+            findedTask.status = req.body.status ;//
             findedTask.totalTime = differenceInMinutes
       }
       await findedTask.save()
